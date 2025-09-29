@@ -13,14 +13,14 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur border-b border-black/5 dark:border-white/10">
-      <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="font-semibold tracking-tight text-foreground">
+      <div className="relative mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
+        <Link href="/" className="font-semibold tracking-tight bg-gradient-to-r from-cyan-600 to-fuchsia-600 bg-clip-text text-transparent">
           Xổ Số Trực Tuyến
         </Link>
         <nav className="flex items-center gap-4 text-sm">
-          <Link className={isActive("/xskt")} href="/xskt">XSKT</Link>
-          <Link className={isActive("/keno")} href="/keno">Keno</Link>
-          <Link className={isActive("/dashboard")} href="/dashboard">Tài khoản</Link>
+          <Link className={isActive("/xskt") + " transition-colors"} href="/xskt">XSKT</Link>
+          <Link className={isActive("/keno") + " transition-colors"} href="/keno">Keno</Link>
+          <Link className={isActive("/dashboard") + " transition-colors"} href="/dashboard">Tài khoản</Link>
         </nav>
         <div className="flex items-center gap-3">
           {user ? (
@@ -35,9 +35,10 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link href="/login" className="rounded-full bg-foreground text-background px-4 py-1.5 text-sm hover:opacity-90 transition-opacity">Đăng nhập</Link>
+            <Link href="/login" className="rounded-full bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white px-4 py-1.5 text-sm shadow-sm hover:opacity-90 transition-opacity">Đăng nhập</Link>
           )}
         </div>
+        <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-cyan-500/40 via-fuchsia-500/40 to-emerald-500/40" />
       </div>
     </header>
   );

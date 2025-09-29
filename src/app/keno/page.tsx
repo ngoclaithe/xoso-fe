@@ -17,9 +17,9 @@ function NumberGrid({ max, selections, setSelections, maxPick }: { max: number; 
           key={n}
           type="button"
           onClick={() => toggle(n)}
-          className={`rounded-lg border px-2 py-1 text-sm ${
+          className={`rounded-lg border px-2 py-1 text-sm transition-colors ${
             selections.includes(n)
-              ? "bg-foreground text-background border-foreground"
+              ? "bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white border-transparent"
               : "bg-background text-foreground border-black/[.08] dark:border-white/[.145] hover:bg-black/[.02] dark:hover:bg-white/[.02]"
           }`}
         >
@@ -53,15 +53,15 @@ export default function KenoPage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-foreground">Keno</h1>
+        <h1 className="text-2xl font-semibold bg-gradient-to-r from-cyan-600 to-fuchsia-600 bg-clip-text text-transparent">Keno</h1>
         <p className="text-sm text-foreground/70">Chọn 1-10 số trong 1..80</p>
       </header>
 
-      <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 space-y-4">
+      <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 space-y-4 bg-background">
         <div className="flex flex-wrap items-center gap-4">
           <label className="text-sm text-foreground/80">Số lượng số chọn</label>
           <select
-            className="rounded-xl border border-black/[.08] dark:border-white/[.145] bg-background px-3 py-2"
+            className="rounded-xl border border-black/[.08] dark:border-white/[.145] bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/50"
             value={maxPick}
             onChange={(e) => setMaxPick(Number(e.target.value))}
           >
@@ -75,7 +75,7 @@ export default function KenoPage() {
               type="number"
               min={1000}
               step={1000}
-              className="w-40 rounded-xl border border-black/[.08] dark:border-white/[.145] bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30"
+              className="w-40 rounded-xl border border-black/[.08] dark:border-white/[.145] bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-cyan-400/50"
               value={stake}
               onChange={(e) => setStake(Number(e.target.value))}
             />
@@ -83,7 +83,7 @@ export default function KenoPage() {
         </div>
         <NumberGrid max={80} selections={selections} setSelections={setSelections} maxPick={maxPick} />
         {error && <div className="text-red-600 text-sm" role="alert">{error}</div>}
-        <button onClick={submit} className="rounded-xl bg-foreground text-background px-4 py-2 hover:opacity-90">Đặt cược</button>
+        <button onClick={submit} className="rounded-xl bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white px-4 py-2 hover:opacity-90">Đặt cược</button>
       </section>
     </main>
   );

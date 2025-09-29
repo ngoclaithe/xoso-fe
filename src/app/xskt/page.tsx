@@ -16,9 +16,9 @@ function NumberGrid({ max, selections, setSelections }: { max: number; selection
           key={n}
           type="button"
           onClick={() => toggle(n)}
-          className={`rounded-lg border px-2 py-1 text-sm ${
+          className={`rounded-lg border px-2 py-1 text-sm transition-colors ${
             selections.includes(n)
-              ? "bg-foreground text-background border-foreground"
+              ? "bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white border-transparent"
               : "bg-background text-foreground border-black/[.08] dark:border-white/[.145] hover:bg-black/[.02] dark:hover:bg-white/[.02]"
           }`}
         >
@@ -53,11 +53,11 @@ export default function XSKTPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-foreground">Xổ số kiến thiết</h1>
+        <h1 className="text-2xl font-semibold bg-gradient-to-r from-cyan-600 to-fuchsia-600 bg-clip-text text-transparent">Xổ số kiến thiết</h1>
         <p className="text-sm text-foreground/70">Chọn 6 số trong khoảng 1..60</p>
       </header>
 
-      <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 space-y-4">
+      <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 space-y-4 bg-background">
         <NumberGrid max={60} selections={selections} setSelections={setSelections} />
         <div className="flex items-center gap-3">
           <label className="text-sm text-foreground/80">Mức cược (đ)</label>
@@ -65,14 +65,14 @@ export default function XSKTPage() {
             type="number"
             min={1000}
             step={1000}
-            className="w-40 rounded-xl border border-black/[.08] dark:border-white/[.145] bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30"
+            className="w-40 rounded-xl border border-black/[.08] dark:border-white/[.145] bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-cyan-400/50"
             value={stake}
             onChange={(e) => setStake(Number(e.target.value))}
           />
         </div>
         {error && <div className="text-red-600 text-sm" role="alert">{error}</div>}
         {ok && <div className="text-green-600 text-sm" role="status">{ok}</div>}
-        <button onClick={submit} className="rounded-xl bg-foreground text-background px-4 py-2 hover:opacity-90">Đặt vé</button>
+        <button onClick={submit} className="rounded-xl bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white px-4 py-2 hover:opacity-90">Đặt vé</button>
       </section>
     </main>
   );
