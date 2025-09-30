@@ -73,7 +73,7 @@ export default function XSKTPage() {
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
+    <main className="py-0">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 space-y-4 bg-background">
           <header className="space-y-1">

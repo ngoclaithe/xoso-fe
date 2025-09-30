@@ -13,7 +13,7 @@ export default function WingoPage() {
   const submit = async () => {
     setError(null);
     try {
-      if (selection === null) throw new Error("Vui lòng ch���n 1 số (0-9)");
+      if (selection === null) throw new Error("Vui lòng chọn 1 số (0-9)");
       if (stake <= 0) throw new Error("Mức cược không hợp lệ");
       await placeBet({ product: "bet", selections: [selection], stake });
       setSelection(null);
@@ -24,7 +24,7 @@ export default function WingoPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 space-y-6">
+    <main className="py-0 space-y-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold bg-gradient-to-r from-cyan-600 to-fuchsia-600 bg-clip-text text-transparent">Wingo</h1>
         <p className="text-sm text-foreground/70">Chọn 1 số từ 0 đến 9</p>
