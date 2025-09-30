@@ -1,5 +1,6 @@
 import Link from "next/link";
-import HeroCarousel from "@/components/HeroCarousel";
+import dynamic from "next/dynamic";
+const HeroCarousel = dynamic(() => import("@/components/HeroCarousel"), { ssr: false });
 
 export default function Home() {
   return (
