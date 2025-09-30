@@ -1,16 +1,39 @@
 import Link from "next/link";
+import HeroCarousel from "@/components/HeroCarousel";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      <main className="py-10">
-        <section className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-cyan-600 via-fuchsia-600 to-emerald-600 bg-clip-text text-transparent">Lot168</h1>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/xskt" className="rounded-full bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white px-5 py-2 text-sm shadow-sm hover:opacity-90">Xổ số</Link>
-            <Link href="/keno" className="rounded-full border border-black/[.08] dark:border-white/[.145] px-5 py-2 text-sm hover:bg-black/[.02] dark:hover:bg-white/[.02]">Keno</Link>
-            <Link href="/wingo" className="rounded-full border border-black/[.08] dark:border-white/[.145] px-5 py-2 text-sm hover:bg-black/[.02] dark:hover:bg-white/[.02]">Wingo</Link>
-          </div>
+      <main className="py-6 space-y-6">
+        <HeroCarousel />
+        <section aria-label="Sản phẩm" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link href="/xskt" className="group rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 bg-background hover:-translate-y-0.5 transition-transform">
+            <div className="flex items-center gap-3">
+              <img src="/file.svg" alt="Xổ số" className="h-10 w-10" />
+              <div>
+                <h3 className="font-semibold text-foreground">Xổ số</h3>
+                <p className="text-sm text-foreground/70">Chọn số 00–99. Đặt cược an toàn.</p>
+              </div>
+            </div>
+          </Link>
+          <Link href="/keno" className="group rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 bg-background hover:-translate-y-0.5 transition-transform">
+            <div className="flex items-center gap-3">
+              <img src="/globe.svg" alt="Keno" className="h-10 w-10" />
+              <div>
+                <h3 className="font-semibold text-foreground">Keno</h3>
+                <p className="text-sm text-foreground/70">Chọn 1–10 số trong 1..80.</p>
+              </div>
+            </div>
+          </Link>
+          <Link href="/wingo" className="group rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 bg-background hover:-translate-y-0.5 transition-transform">
+            <div className="flex items-center gap-3">
+              <img src="/window.svg" alt="Wingo" className="h-10 w-10" />
+              <div>
+                <h3 className="font-semibold text-foreground">Wingo</h3>
+                <p className="text-sm text-foreground/70">Chọn 1 số 0–9, thưởng nhanh.</p>
+              </div>
+            </div>
+          </Link>
         </section>
       </main>
     </div>
