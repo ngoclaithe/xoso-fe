@@ -18,7 +18,7 @@ export default function SidebarNav() {
     <aside className="hidden md:block w-48 shrink-0">
       <nav className="sticky top-16 space-y-1">
         <NavItem href="/xskt" icon="/file.svg" label="Xổ số" active={!!pathname?.startsWith("/xskt")} />
-        <NavItem href="/keno" icon="/globe.svg" label="Keno" active={!!pathname?.startsWith("/keno")} />
+        <NavItem href="/keno" icon="/keno.png" label="Keno" active={!!pathname?.startsWith("/keno")} />
         <NavItem href="/wingo" icon="/window.svg" label="Wingo" active={!!pathname?.startsWith("/wingo")} />
       </nav>
     </aside>
