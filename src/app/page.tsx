@@ -1,6 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import dynamic from "next/dynamic";
-const HeroCarousel = dynamic(() => import("@/components/HeroCarousel"), { ssr: false });
+import HeroCarousel from "@/components/HeroCarousel";
 
 export default function Home() {
   return (
