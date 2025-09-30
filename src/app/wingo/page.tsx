@@ -26,7 +26,6 @@ function getPeriodIndex(nowMs: number, seconds: number) {
 }
 
 function resultForPeriod(periodIndex: number) {
-  // Deterministic pseudo-random; stable across clients
   return (periodIndex * 1103515245 + 12345 >>> 0) % 10;
 }
 
@@ -41,7 +40,7 @@ export default function WingoPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [timeLeftLabel, setTimeLeftLabel] = useState<string>("00:30");
-  const [overlaySeconds, setOverlaySeconds] = useState<number | null>(null); // 5..1
+  const [overlaySeconds, setOverlaySeconds] = useState<number | null>(null);
   const [showResult, setShowResult] = useState<{ visible: boolean; value: number | null }>({ visible: false, value: null });
   const prevBucketRef = useRef<number>(-1);
 
@@ -52,25 +51,22 @@ export default function WingoPage() {
       const now = Date.now();
       const msIntoPeriod = now % (seconds * 1000);
       const msLeft = seconds * 1000 - msIntoPeriod;
-      const sLeft = Math.floor(msLeft / 1000); // 0..seconds-1
+      const sLeft = Math.floor(msLeft / 1000);
       setTimeLeftLabel(formatMMSS(sLeft));
 
-      // Countdown overlay for last 5 seconds: 05..01
-      const overlay = Math.ceil(msLeft / 1000); // 1..seconds
+      const overlay = Math.ceil(msLeft / 1000);
       if (overlay <= 5 && overlay >= 1) {
         setOverlaySeconds(overlay);
       } else {
         setOverlaySeconds(null);
       }
 
-      // Detect boundary to show result for the finishing period
-      const bucket = Math.floor(msLeft / 1000); // integer seconds bucket
+      const bucket = Math.floor(msLeft / 1000);
       if (prevBucketRef.current !== bucket) {
         if (bucket === 0) {
-          const periodIdx = getPeriodIndex(now - 1, seconds); // finishing period
+          const periodIdx = getPeriodIndex(now - 1, seconds);
           const v = resultForPeriod(periodIdx);
           setShowResult({ visible: true, value: v });
-          // Hide after 1.5s or when new period clearly starts
           setTimeout(() => setShowResult((prev) => (prev.value === v ? { visible: false, value: prev.value } : prev)), 1500);
         }
         prevBucketRef.current = bucket;
@@ -106,7 +102,6 @@ export default function WingoPage() {
 
   return (
     <main className="py-0 space-y-5">
-      {/* Tabs */}
       <div className="flex gap-2">
         {(Object.keys(TAB_CONFIG) as TabKey[]).map((k) => (
           <button
@@ -124,7 +119,6 @@ export default function WingoPage() {
         ))}
       </div>
 
-      {/* Info panel */}
       <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-4 bg-background">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="p-3">
@@ -158,7 +152,6 @@ export default function WingoPage() {
         </div>
       </section>
 
-      {/* Color quick picks */}
       <div className="grid grid-cols-3 gap-3">
         {[
           { k: "green", label: "Xanh", cls: "bg-emerald-500" },
@@ -177,26 +170,27 @@ export default function WingoPage() {
         ))}
       </div>
 
-      {/* Number balls - one horizontal row using the same image for all buttons */}
+      {/* Single composite image with 10 balls and invisible click areas */}
       <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-4 bg-background">
-        <div className="flex gap-3 overflow-x-auto pb-1">
-          {Array.from({ length: 10 }, (_, i) => i).map((n) => (
-            <button
-              key={n}
-              onClick={() => setSelection(n)}
-              className={`relative overflow-hidden rounded-full p-0 aspect-square w-14 grid place-items-center border flex-shrink-0 transition ${
-                selection === n
-                  ? "ring-2 ring-cyan-400/70 border-transparent"
-                  : "border-black/[.08] dark:border-white/[.145]"
-              }`}
-            >
-              <img src="/wingo-removebg-preview.png" alt="Bóng số" className="absolute inset-0 h-full w-full object-cover" />
-              <span className="relative z-[1] text-lg font-semibold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">{n}</span>
-            </button>
-          ))}
+        <div className="relative mx-auto max-w-md">
+          <img src="/wingo-removebg-preview.png" alt="Bảng bóng 0-9" className="w-full h-auto select-none pointer-events-none" />
+          <div className="absolute inset-0 grid grid-cols-5 grid-rows-2">
+            {Array.from({ length: 10 }, (_, n) => (
+              <button
+                key={n}
+                aria-label={`Chọn ${n}`}
+                onClick={() => setSelection(n)}
+                className="relative w-full h-full"
+              >
+                {selection === n && (
+                  <span className="pointer-events-none absolute inset-[12%] rounded-full ring-2 ring-cyan-400/70" />
+                )}
+                <span className="sr-only">{n}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Controls row */}
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <button onClick={randomPick} className="rounded-xl border border-black/[.08] dark:border-white/[.145] px-3 py-2 text-sm">Ngẫu nhiên</button>
 
@@ -263,7 +257,6 @@ export default function WingoPage() {
         <div className="mt-1 text-xs text-foreground/60">Tổng cược: {computedStake.toLocaleString("vi-VN")} đ</div>
       </section>
 
-      {/* Overlays: countdown 05..01 then result */}
       {(overlaySeconds !== null || showResult.visible) && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60">
           {overlaySeconds !== null ? (
@@ -271,7 +264,6 @@ export default function WingoPage() {
               <div className="text-7xl font-bold bg-gradient-to-r from-cyan-500 to-fuchsia-600 bg-clip-text text-transparent">
                 {String(overlaySeconds).padStart(2, "0")}
               </div>
-              <div className="mt-2 text-sm text-foreground/70">Chuẩn bị hiển thị kết quả</div>
             </div>
           ) : (
             <div className="rounded-3xl px-10 py-8 bg-background border border-black/[.08] dark:border-white/[.145] text-center">
