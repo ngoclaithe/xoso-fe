@@ -18,15 +18,35 @@ export default function Home() {
               </div>
             </div>
           </Link>
-          <Link href="/keno" className="group rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 bg-gradient-to-r from-rose-500 to-orange-500 text-white hover:-translate-y-0.5 transition-transform">
+          <Link
+            href="/keno"
+            className="group rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 bg-gradient-to-r from-rose-500 to-orange-500 text-white hover:-translate-y-0.5 transition-transform"
+          >
             <div className="flex items-center gap-3">
-              <img src="/keno.png" alt="Keno" className="h-10 w-10 rounded" />
+              {/* SVG thay cho ảnh PNG */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 12h8M12 8v8"
+                />
+              </svg>
+
               <div>
                 <h3 className="font-semibold">Keno</h3>
                 <p className="text-sm text-white/80">Chọn 1–10 số trong 1..80.</p>
               </div>
             </div>
           </Link>
+
           <Link href="/wingo" className="group rounded-2xl border border-black/[.08] dark:border-white/[.145] p-5 bg-gradient-to-r from-rose-500 to-orange-500 text-white hover:-translate-y-0.5 transition-transform">
             <div className="flex items-center gap-3">
               <img src="/window.svg" alt="Wingo" className="h-10 w-10" />
