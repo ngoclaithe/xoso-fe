@@ -51,7 +51,7 @@ export default function KenoPage() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8 space-y-6">
+    <main className="py-0 space-y-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold bg-gradient-to-r from-cyan-600 to-fuchsia-600 bg-clip-text text-transparent">Keno</h1>
         <p className="text-sm text-foreground/70">Chọn 1-10 số trong 1..80</p>
