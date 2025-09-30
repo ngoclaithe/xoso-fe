@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import SidebarNav from "@/components/SidebarNav";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </div>
         <AuthProvider>
           <Navbar />
-          <div className="mx-auto max-w-6xl px-4 flex gap-6 py-6">
+          <div className="mx-auto max-w-6xl px-4 flex gap-6 pb-20 md:pb-6 pt-6">
             <SidebarNav />
             <div className="flex-1 min-w-0">{children}</div>
           </div>
+          <MobileBottomNav />
         </AuthProvider>
       </body>
     </html>
