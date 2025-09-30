@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { placeBet } from "@/lib/bffClient";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +15,21 @@ const TAB_CONFIG: Record<TabKey, { label: string; seconds: number }> = {
 
 const MULTIPLIERS = [1, 5, 10, 20, 50, 100];
 
+function formatMMSS(totalSeconds: number) {
+  const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const ss = String(totalSeconds % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
+
+function getPeriodIndex(nowMs: number, seconds: number) {
+  return Math.floor(nowMs / (seconds * 1000));
+}
+
+function resultForPeriod(periodIndex: number) {
+  // Deterministic pseudo-random; stable across clients
+  return (periodIndex * 1103515245 + 12345 >>> 0) % 10;
+}
+
 export default function WingoPage() {
   const router = useRouter();
   const [tab, setTab] = useState<TabKey>("30s");
@@ -24,7 +39,11 @@ export default function WingoPage() {
   const [stake, setStake] = useState<number>(10000);
   const [multiplier, setMultiplier] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
-  const [timeLeft, setTimeLeft] = useState<string>("00:30");
+
+  const [timeLeftLabel, setTimeLeftLabel] = useState<string>("00:30");
+  const [overlaySeconds, setOverlaySeconds] = useState<number | null>(null); // 5..1
+  const [showResult, setShowResult] = useState<{ visible: boolean; value: number | null }>({ visible: false, value: null });
+  const prevBucketRef = useRef<number>(-1);
 
   const seconds = TAB_CONFIG[tab].seconds;
 
@@ -33,13 +52,32 @@ export default function WingoPage() {
       const now = Date.now();
       const msIntoPeriod = now % (seconds * 1000);
       const msLeft = seconds * 1000 - msIntoPeriod;
-      const s = Math.floor(msLeft / 1000);
-      const mm = String(Math.floor(s / 60)).padStart(2, "0");
-      const ss = String(s % 60).padStart(2, "0");
-      setTimeLeft(`${mm}:${ss}`);
+      const sLeft = Math.floor(msLeft / 1000); // 0..seconds-1
+      setTimeLeftLabel(formatMMSS(sLeft));
+
+      // Countdown overlay for last 5 seconds: 05..01
+      const overlay = Math.ceil(msLeft / 1000); // 1..seconds
+      if (overlay <= 5 && overlay >= 1) {
+        setOverlaySeconds(overlay);
+      } else {
+        setOverlaySeconds(null);
+      }
+
+      // Detect boundary to show result for the finishing period
+      const bucket = Math.floor(msLeft / 1000); // integer seconds bucket
+      if (prevBucketRef.current !== bucket) {
+        if (bucket === 0) {
+          const periodIdx = getPeriodIndex(now - 1, seconds); // finishing period
+          const v = resultForPeriod(periodIdx);
+          setShowResult({ visible: true, value: v });
+          // Hide after 1.5s or when new period clearly starts
+          setTimeout(() => setShowResult((prev) => (prev.value === v ? { visible: false, value: prev.value } : prev)), 1500);
+        }
+        prevBucketRef.current = bucket;
+      }
     };
     update();
-    const id = setInterval(update, 250);
+    const id = setInterval(update, 200);
     return () => clearInterval(id);
   }, [seconds]);
 
@@ -70,7 +108,7 @@ export default function WingoPage() {
     <main className="py-0 space-y-5">
       {/* Tabs */}
       <div className="flex gap-2">
-        {(Object.keys(TAB_CONFIG) as TabKey[]).map((k, i) => (
+        {(Object.keys(TAB_CONFIG) as TabKey[]).map((k) => (
           <button
             key={k}
             onClick={() => setTab(k)}
@@ -80,7 +118,7 @@ export default function WingoPage() {
                 : "bg-background text-foreground border-black/[.08] dark:border-white/[.145] hover:bg-black/[.02] dark:hover:bg-white/[.02]"
             }`}
           >
-            <span className="inline-block h-4 w-4 rounded-full border border-white/50 bg-black/10" />
+            <span className="inline-block h-4 w-4 rounded-full border border-white/50 bg-black/[.10]" />
             {TAB_CONFIG[k].label}
           </button>
         ))}
@@ -108,7 +146,7 @@ export default function WingoPage() {
             <p className="text-xs text-foreground/70">Thời gian còn lại</p>
             <div className="mt-2 flex items-end gap-3">
               <div className="flex items-center gap-1">
-                {timeLeft.split("").map((ch, idx) => (
+                {timeLeftLabel.split("").map((ch, idx) => (
                   <span key={idx} className={`h-9 min-w-7 grid place-items-center rounded-md bg-black/[.04] dark:bg-white/[.06] text-sm font-semibold ${ch === ":" ? "px-1" : "px-2"}`}>
                     {ch}
                   </span>
@@ -139,14 +177,14 @@ export default function WingoPage() {
         ))}
       </div>
 
-      {/* Number balls */}
+      {/* Number balls - one horizontal row using the same image for all buttons */}
       <section className="rounded-2xl border border-black/[.08] dark:border-white/[.145] p-4 bg-background">
-        <div className="grid grid-cols-5 gap-3">
+        <div className="flex gap-3 overflow-x-auto pb-1">
           {Array.from({ length: 10 }, (_, i) => i).map((n) => (
             <button
               key={n}
               onClick={() => setSelection(n)}
-              className={`relative overflow-hidden rounded-full p-0 aspect-square grid place-items-center border transition ${
+              className={`relative overflow-hidden rounded-full p-0 aspect-square w-14 grid place-items-center border flex-shrink-0 transition ${
                 selection === n
                   ? "ring-2 ring-cyan-400/70 border-transparent"
                   : "border-black/[.08] dark:border-white/[.145]"
@@ -224,6 +262,27 @@ export default function WingoPage() {
         {error && <div className="mt-3 text-red-600 text-sm" role="alert">{error}</div>}
         <div className="mt-1 text-xs text-foreground/60">Tổng cược: {computedStake.toLocaleString("vi-VN")} đ</div>
       </section>
+
+      {/* Overlays: countdown 05..01 then result */}
+      {(overlaySeconds !== null || showResult.visible) && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60">
+          {overlaySeconds !== null ? (
+            <div className="rounded-3xl px-10 py-8 bg-background border border-black/[.08] dark:border-white/[.145] text-center">
+              <div className="text-7xl font-bold bg-gradient-to-r from-cyan-500 to-fuchsia-600 bg-clip-text text-transparent">
+                {String(overlaySeconds).padStart(2, "0")}
+              </div>
+              <div className="mt-2 text-sm text-foreground/70">Chuẩn bị hiển thị kết quả</div>
+            </div>
+          ) : (
+            <div className="rounded-3xl px-10 py-8 bg-background border border-black/[.08] dark:border-white/[.145] text-center">
+              <div className="text-sm text-foreground/70">Kết quả</div>
+              <div className="mt-1 text-7xl font-bold bg-gradient-to-r from-cyan-500 to-fuchsia-600 bg-clip-text text-transparent">
+                {showResult.value}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </main>
   );
 }
