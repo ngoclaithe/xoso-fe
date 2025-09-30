@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Xổ Số Trực Tuyến",
-  description: "Nền tảng xổ số, keno và đặt cược với BFF proxy",
+  title: "Lot168",
+  description: "Lot168 - Xổ số, Keno, Wingo",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
